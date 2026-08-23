@@ -17,8 +17,16 @@
       "networkMode": "PUBLIC",
       "protocol": "HTTP",
       "requestHeaderAllowlist": [
-        "X-Amzn-Bedrock-AgentCore-Runtime-Custom-User-Id"
-      ]
+        "X-Amzn-Bedrock-AgentCore-Runtime-Custom-User-Id",
+        "Authorization"
+      ],
+      "authorizerType": "CUSTOM_JWT",
+      "authorizerConfiguration": {
+        "customJwtAuthorizer": {
+          "discoveryUrl": "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_pRNo8iFqw/.well-known/openid-configuration",
+          "allowedClients": ["1ugnuq4tobfg3jnclqofaj3ouv", "593ru0bal4vj75hosqkf5bt4jd"]
+        }
+      }
     }
   ],
   "memories": [
