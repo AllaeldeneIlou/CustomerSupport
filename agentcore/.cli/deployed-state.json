@@ -21,13 +21,20 @@
             "gatewayArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:gateway/customersupport-my-gateway-secure-ir7bkffiqp",
             "gatewayUrl": "https://customersupport-my-gateway-secure-ir7bkffiqp.gateway.bedrock-agentcore.us-east-1.amazonaws.com",
             "targets": {
-              "WarrantyCheck": {
-                "targetId": "NFAQFBPG5Z"
-              },
               "ProcessRefund": {
                 "targetId": "ZKO6IF22BY"
+              },
+              "WarrantyCheck": {
+                "targetId": "NFAQFBPG5Z"
               }
             }
+          }
+        },
+        "credentials": {
+          "gateway-egress-oauth": {
+            "credentialProviderArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:token-vault/default/oauth2credentialprovider/gateway-egress-oauth",
+            "clientSecretArn": "arn:aws:secretsmanager:us-east-1:415087856646:secret:bedrock-agentcore-identity!default/oauth2/gateway-egress-oauth-64f8c15b-ivJzxq",
+            "callbackUrl": "https://bedrock-agentcore.us-east-1.amazonaws.com/identities/oauth2/callback/23e7a28b-4d13-4324-bffc-978c13af8d96"
           }
         },
         "onlineEvalConfigs": {
@@ -60,8 +67,19 @@
             "engineName": "CustomerSupportPolicyEngine"
           }
         },
+        "harnesses": {
+          "OrderResearchAgent": {
+            "harnessId": "CustomerSupport_OrderResearchAgent-sRfXUFfrX3",
+            "harnessArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:harness/CustomerSupport_OrderResearchAgent-sRfXUFfrX3",
+            "roleArn": "arn:aws:iam::415087856646:role/CustomerSupport_OrderResearchAgent",
+            "status": "READY",
+            "harnessVersion": 3,
+            "agentRuntimeArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:runtime/harness_CustomerSupport_OrderResearchAgent-tuhUuu5gvf",
+            "provisioner": "cloudformation"
+          }
+        },
         "stackName": "AgentCore-CustomerSupport-default",
-        "deployHash": "923c7a32d2c143a2"
+        "deployHash": "0842fcf41b9abfd2"
       }
     }
   }
