@@ -1,14 +1,15 @@
 from strands import Agent, tool
 from bedrock_agentcore.runtime import BedrockAgentCoreApp
 from model.load import load_model
-from mcp_client.client import get_streamable_http_mcp_client
+from mcp_client.client import get_streamable_http_mcp_client, get_gateway_mcp_client
 from memory.session import get_memory_session_manager
+import json
 
 app = BedrockAgentCoreApp()
 log = app.logger
 
-# Exa AI MCP client for web search
-mcp_clients = [get_streamable_http_mcp_client()]
+# MCP clients: Exa AI (web search) + AgentCore Gateway (Lambda tools)
+mcp_clients = [get_streamable_http_mcp_client(), get_gateway_mcp_client()]
 
 SYSTEM_PROMPT="""You are a helpful and professional customer support assistant for an e-commerce company.
 Your role is to:
@@ -18,7 +19,7 @@ Your role is to:
 - If you can't help with something, direct customers to the appropriate contact
 
 You have access to tools for looking up return policies, searching product information, and more.
-Additional tools may be available at runtime — always check your full tool list and use the most appropriate tool for each customer request.
+Additional tools may be available at runtime - always check your full tool list and use the most appropriate tool for each customer request.
 Always use tools to get accurate, up-to-date information rather than guessing."""
 
 # --- Customer Support Tools ---
@@ -30,11 +31,11 @@ RETURN_POLICIES = {
 }
 
 PRODUCTS = {
-    "PROD-001": {"name": "Wireless Headphones", "price": 79.99, "category": "audio", "description": "Noise-cancelling Bluetooth headphones with 30h battery life", "warranty_months": 12},
-    "PROD-002": {"name": "Smart Watch", "price": 249.99, "category": "electronics", "description": "Fitness tracker with heart rate monitor, GPS, and 5-day battery life", "warranty_months": 24},
-    "PROD-003": {"name": "Laptop Stand", "price": 39.99, "category": "accessories", "description": "Adjustable aluminum laptop stand for ergonomic desk setup", "warranty_months": 6},
-    "PROD-004": {"name": "USB-C Hub", "price": 54.99, "category": "accessories", "description": "7-in-1 USB-C hub with HDMI, USB-A, SD card reader, and ethernet", "warranty_months": 12},
-    "PROD-005": {"name": "Mechanical Keyboard", "price": 129.99, "category": "electronics", "description": "RGB mechanical keyboard with Cherry MX switches and programmable keys", "warranty_months": 24},
+    "PROD-001": {"name": "Wireless Headphones", "price": 79.99, "category": "audio", "description": "Noise-cancelling Bluetooth headphones with 30h battery life"},
+    "PROD-002": {"name": "Smart Watch", "price": 249.99, "category": "electronics", "description": "Fitness tracker with heart rate monitor, GPS, and 5-day battery life"},
+    "PROD-003": {"name": "Laptop Stand", "price": 39.99, "category": "accessories", "description": "Adjustable aluminum laptop stand for ergonomic desk setup"},
+    "PROD-004": {"name": "USB-C Hub", "price": 54.99, "category": "accessories", "description": "7-in-1 USB-C hub with HDMI, USB-A, SD card reader, and ethernet"},
+    "PROD-005": {"name": "Mechanical Keyboard", "price": 129.99, "category": "electronics", "description": "RGB mechanical keyboard with Cherry MX switches and programmable keys"},
 }
 
 @tool
@@ -67,7 +68,7 @@ def get_product_info(query: str) -> str:
     # Search by ID
     if query.upper() in PRODUCTS:
         p = PRODUCTS[query.upper()]
-        return f"{p['name']} ({query.upper()}): ${p['price']}, Category: {p['category']}, {p['description']}, Warranty: {p['warranty_months']} months"
+        return f"{p['name']} ({query.upper()}): ${p['price']}, Category: {p['category']}, {p['description']}"
     # Search by keyword
     results = [f"{pid}: {p['name']} - ${p['price']} - {p['description']}" for pid, p in PRODUCTS.items()
                if query_lower in p['name'].lower() or query_lower in p['description'].lower() or query_lower in p['category'].lower()]
@@ -77,7 +78,7 @@ def get_product_info(query: str) -> str:
 
 tools = [get_return_policy, get_product_info]
 
-# Add MCP client (Exa web search) to tools
+# Add MCP client (Exa AI web search) tools
 for mcp_client in mcp_clients:
     if mcp_client:
         tools.append(mcp_client)
@@ -93,10 +94,9 @@ def get_or_create_agent(session_id, user_id):
             model=load_model(),
             session_manager=get_memory_session_manager(session_id, user_id),
             system_prompt=SYSTEM_PROMPT,
-            tools=tools
+            tools=tools,
         )
     return _agent
-
 
 @app.entrypoint
 async def invoke(payload, context):
@@ -113,6 +113,7 @@ async def invoke(payload, context):
     async for event in stream:
         if "data" in event and isinstance(event["data"], str):
             yield event["data"]
+
 
 if __name__ == "__main__":
     app.run()
