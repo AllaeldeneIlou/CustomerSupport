@@ -3,6 +3,11 @@
     "default": {
       "resources": {
         "runtimes": {
+          "CustomerSupportAB": {
+            "runtimeId": "CustomerSupport_CustomerSupportAB-u1kIPqAXqy",
+            "runtimeArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:runtime/CustomerSupport_CustomerSupportAB-u1kIPqAXqy",
+            "roleArn": "arn:aws:iam::415087856646:role/AgentCore-CustomerSupport-ApplicationAgentCustomerS-69jbu9NCV5R8"
+          },
           "CustomerSupport": {
             "runtimeId": "CustomerSupport_CustomerSupport-LDQt4vDWj2",
             "runtimeArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:runtime/CustomerSupport_CustomerSupport-LDQt4vDWj2",
@@ -24,6 +29,9 @@
               "ProcessRefund": {
                 "targetId": "ZKO6IF22BY"
               },
+              "customer-support-ab": {
+                "targetId": "67PJFHQUBY"
+              },
               "WarrantyCheck": {
                 "targetId": "NFAQFBPG5Z"
               }
@@ -42,6 +50,23 @@
             "onlineEvaluationConfigId": "CustomerSupport_QualityMonitor-C4V0EwD1hI",
             "onlineEvaluationConfigArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:online-evaluation-config/CustomerSupport_QualityMonitor-C4V0EwD1hI",
             "agent": "CustomerSupport"
+          },
+          "ABQualityMonitor": {
+            "onlineEvaluationConfigId": "CustomerSupport_ABQualityMonitor-b6rqORFkld",
+            "onlineEvaluationConfigArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:online-evaluation-config/CustomerSupport_ABQualityMonitor-b6rqORFkld",
+            "agent": "CustomerSupportAB"
+          }
+        },
+        "configBundles": {
+          "customerSupportControl": {
+            "bundleId": "CustomerSupportcustomerSupportControl-OmYzkx3Nww",
+            "bundleArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:configuration-bundle/CustomerSupportcustomerSupportControl-OmYzkx3Nww",
+            "versionId": "2303b0aa-bb2d-4eb3-8b69-685b21da09e0"
+          },
+          "customerSupportTreatment": {
+            "bundleId": "CustomerSupportcustomerSupportTreatment-3qJfjg9v8p",
+            "bundleArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:configuration-bundle/CustomerSupportcustomerSupportTreatment-3qJfjg9v8p",
+            "versionId": "ebc2f66a-4c9c-4902-9ee0-18e705145240"
           }
         },
         "policyEngines": {
@@ -79,7 +104,7 @@
           }
         },
         "stackName": "AgentCore-CustomerSupport-default",
-        "deployHash": "0842fcf41b9abfd2"
+        "deployHash": "f5b370ea93621313"
       }
     }
   }
