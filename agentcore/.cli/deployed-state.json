@@ -23,6 +23,9 @@
             "targets": {
               "WarrantyCheck": {
                 "targetId": "NFAQFBPG5Z"
+              },
+              "ProcessRefund": {
+                "targetId": "ZKO6IF22BY"
               }
             }
           }
@@ -34,8 +37,31 @@
             "agent": "CustomerSupport"
           }
         },
+        "policyEngines": {
+          "CustomerSupportPolicyEngine": {
+            "policyEngineId": "CustomerSupport_CustomerSupportPolicyEngine-3oeq5n2gqy",
+            "policyEngineArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:policy-engine/CustomerSupport_CustomerSupportPolicyEngine-3oeq5n2gqy"
+          }
+        },
+        "policies": {
+          "CustomerSupportPolicyEngine/refund_limit_policy": {
+            "policyId": "refund_limit_policy-zwq43bsca0",
+            "policyArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:policy-engine/CustomerSupport_CustomerSupportPolicyEngine-3oeq5n2gqy/policy/refund_limit_policy-zwq43bsca0",
+            "engineName": "CustomerSupportPolicyEngine"
+          },
+          "CustomerSupportPolicyEngine/warranty_check_policy": {
+            "policyId": "warranty_check_policy-f3qq2tds99",
+            "policyArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:policy-engine/CustomerSupport_CustomerSupportPolicyEngine-3oeq5n2gqy/policy/warranty_check_policy-f3qq2tds99",
+            "engineName": "CustomerSupportPolicyEngine"
+          },
+          "CustomerSupportPolicyEngine/refund_reason_policy": {
+            "policyId": "refund_reason_policy-u_7sye9mdw",
+            "policyArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:policy-engine/CustomerSupport_CustomerSupportPolicyEngine-3oeq5n2gqy/policy/refund_reason_policy-u_7sye9mdw",
+            "engineName": "CustomerSupportPolicyEngine"
+          }
+        },
         "stackName": "AgentCore-CustomerSupport-default",
-        "deployHash": "6c753ab5c02bf510"
+        "deployHash": "923c7a32d2c143a2"
       }
     }
   }

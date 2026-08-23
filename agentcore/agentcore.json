@@ -81,6 +81,14 @@
             "lambdaArn": "arn:aws:lambda:us-east-1:415087856646:function:workshop-warranty-check",
             "toolSchemaFile": "app/CustomerSupport/tool/warranty_schema.json"
           }
+        },
+        {
+          "name": "ProcessRefund",
+          "targetType": "lambdaFunctionArn",
+          "lambdaFunctionArn": {
+            "lambdaArn": "arn:aws:lambda:us-east-1:415087856646:function:workshop-process-refund",
+            "toolSchemaFile": "app/CustomerSupport/tool/refund_schema.json"
+          }
         }
       ],
       "authorizerType": "CUSTOM_JWT",
@@ -94,7 +102,11 @@
         }
       },
       "enableSemanticSearch": true,
-      "exceptionLevel": "NONE"
+      "exceptionLevel": "NONE",
+      "policyEngineConfiguration": {
+        "policyEngineName": "CustomerSupportPolicyEngine",
+        "mode": "ENFORCE"
+      }
     }
   ],
   "unassignedTargets": [
@@ -107,7 +119,38 @@
       }
     }
   ],
-  "policyEngines": [],
+  "policyEngines": [
+    {
+      "name": "CustomerSupportPolicyEngine",
+      "description": "Governs customer support agent tool access - refund limits and tool permissions",
+      "policies": [
+        {
+          "name": "refund_limit_policy",
+          "description": "Allow refunds under 100 dollars only",
+          "statement": "permit(principal, action == AgentCore::Action::\"ProcessRefund___process_refund\", resource == AgentCore::Gateway::\"arn:aws:bedrock-agentcore:us-east-1:415087856646:gateway/customersupport-my-gateway-secure-ir7bkffiqp\") when { ((context.input).amount) < 100 };",
+          "validationMode": "FAIL_ON_ANY_FINDINGS",
+          "enforcementMode": "ACTIVE",
+          "authorizationPhase": "INITIATE"
+        },
+        {
+          "name": "warranty_check_policy",
+          "description": "Allow all authenticated users to check warranties",
+          "statement": "permit(principal, action == AgentCore::Action::\"WarrantyCheck___check_warranty\", resource == AgentCore::Gateway::\"arn:aws:bedrock-agentcore:us-east-1:415087856646:gateway/customersupport-my-gateway-secure-ir7bkffiqp\");",
+          "validationMode": "IGNORE_ALL_FINDINGS",
+          "enforcementMode": "ACTIVE",
+          "authorizationPhase": "INITIATE"
+        },
+        {
+          "name": "refund_reason_policy",
+          "description": "Forbid refunds when the reason does not contain the word defective",
+          "statement": "forbid(principal, action == AgentCore::Action::\"ProcessRefund___process_refund\", resource == AgentCore::Gateway::\"arn:aws:bedrock-agentcore:us-east-1:415087856646:gateway/customersupport-my-gateway-secure-ir7bkffiqp\") unless { (context.input).reason like \"*defective*\" };",
+          "validationMode": "IGNORE_ALL_FINDINGS",
+          "enforcementMode": "ACTIVE",
+          "authorizationPhase": "INITIATE"
+        }
+      ]
+    }
+  ],
   "configBundles": [],
   "abTests": [],
   "harnesses": [],
