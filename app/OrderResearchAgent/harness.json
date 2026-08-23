@@ -1,0 +1,64 @@
+{
+  "name": "OrderResearchAgent",
+  "model": {
+    "provider": "bedrock",
+    "modelId": "us.anthropic.claude-sonnet-4-6"
+  },
+  "systemPrompt": "You are an order research specialist. Help customers investigate order issues, check warranties, and produce detailed analysis reports. When asked to save files, use the code interpreter to write them to /tmp/.",
+  "tools": [
+    {
+      "type": "agentcore_code_interpreter",
+      "name": "code-interpreter"
+    },
+    {
+      "type": "agentcore_gateway",
+      "name": "my-gateway-secure",
+      "config": {
+        "agentCoreGateway": {
+          "gatewayArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:gateway/customersupport-my-gateway-secure-ir7bkffiqp",
+          "outboundAuth": {
+            "oauth": {
+              "providerArn": "arn:aws:bedrock-agentcore:us-east-1:415087856646:token-vault/default/oauth2credentialprovider/gateway-egress-oauth",
+              "scopes": [
+                "agentcore/invoke"
+              ],
+              "grantType": "CLIENT_CREDENTIALS"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "inline_function",
+      "name": "approve_exception",
+      "config": {
+        "inlineFunction": {
+          "description": "Request manager approval for a refund that exceeds the automated limit. Returns approved or denied with approver name.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "order_id": {
+                "type": "string"
+              },
+              "amount": {
+                "type": "number"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "order_id",
+              "amount",
+              "reason"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "skills": [],
+  "memory": {
+    "mode": "disabled"
+  }
+}
